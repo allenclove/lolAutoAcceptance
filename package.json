@@ -3,7 +3,7 @@
   "productName": "my-app",
   "version": "1.0.0",
   "description": "My Electron application description",
-  "main": "src/index.js",
+  "main": "src/main.js",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
@@ -45,6 +45,7 @@
     }
   },
   "dependencies": {
+    "@electron/remote": "^2.0.1",
     "electron-squirrel-startup": "^1.0.0"
   },
   "devDependencies": {

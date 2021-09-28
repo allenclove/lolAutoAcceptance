@@ -1,5 +1,8 @@
+const { ChildProcess } = require('child_process');
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
+
+require('@electron/remote/main').initialize();
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
@@ -11,6 +14,10 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+    },
   });
 
   // and load the index.html of the app.
@@ -44,3 +51,25 @@ app.on('activate', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
+
+// const exec = require('child_process').exec;
+// var cmd = 'wmic process get executablepath | find "WeChatApp.exe"';
+
+// function testDemo() {
+//   try {
+//     //不知道为啥这里会报错， 但是没有影响运行
+//     exec();
+//   } catch (err) {
+  
+//   }
+// }
+// exec(cmd, function (err, stdout, stderr) {
+//   // 获取命令行执行的输出
+//   console.log(stdout);
+//   var arr = stdout.split("\r\r\n");
+//   let newArr = arr.filter(i=>i && i.trim()).filter(i=>i.trim());
+//   console.log(newArr);
+// });
+
+
+

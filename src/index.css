@@ -4,3 +4,11 @@ body {
   max-width: 38rem;
   padding: 2rem;
 }
+
+div#divdemo {
+  background-color: orange;
+  color: black;
+  width: 100%;
+  height: 100px;
+  white-space: pre-line;
+}
