@@ -1,0 +1,13 @@
+### 注意Authorization是必要参数,是通过Basic [账号:密码]的base64编码组合而成
+### 接受对局
+POST https://127.0.0.1:60386/lol-matchmaking/v1/ready-check/accept 
+Authorization: Basic cmlvdDoxbDRxaG1fblUwWUkyTGtDckZBRjR3
+
+
+### 获取英雄信息
+GET https://127.0.0.1:60386/lol-champions/v1/owned-champions-minimal
+Authorization: Basic cmlvdDoxbDRxaG1fblUwWUkyTGtDckZBRjR3
+
+### 获取当前对局状态
+GET https://127.0.0.1:50207/lol-lobby/v2/lobby/matchmaking/search-state
+Authorization: Basic cmlvdDpob0p4SzMwZm1fX1QtakM3dmtmNU9B

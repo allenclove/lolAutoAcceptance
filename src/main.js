@@ -15,8 +15,9 @@ const createWindow = () => {
     width: 800,
     height: 600,
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
+      nodeIntegration: true,  //渲染进程调用nodejs
+      contextIsolation: false,  //渲染进程调用nodejs
+      webSecurity: false,  //跨域问题
     },
   });
 
@@ -26,6 +27,8 @@ const createWindow = () => {
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
 };
+
+ app.commandLine.appendSwitch('--ignore-certificate-errors', 'true')  //跨域问题
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -70,6 +73,5 @@ app.on('activate', () => {
 //   let newArr = arr.filter(i=>i && i.trim()).filter(i=>i.trim());
 //   console.log(newArr);
 // });
-
 
 
