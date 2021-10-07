@@ -4,7 +4,6 @@ const axios = require('axios');  //用于异步请求
 const exec = require('child_process').exec;  //用于执行cmd命令
 const path = require('path'); //处理文件路径
 const async = require('async');  //用来实现同步运行方法
-const { app } = require('electron');
 const { resolve } = require('path');
 
 
