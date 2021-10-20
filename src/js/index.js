@@ -28,7 +28,6 @@ var auto_acceptance_run_status = false;  //这个作为自动接受功能是否�
 var lol_run_status = false;  //这个作为游戏是否运行的标志
 var is_parse_lockfile = false;  //这个是是否解析lockfile文件的标志
 var lolpath = '';  //游戏启动目录路径
-var searchState = 'Searching';  //这个是游戏对局状态
 
 
 //打开该程序就检测游戏是否开启, 开启了就获取游戏启动路径并解析文件,如果没有开启就提示并结束该程序
@@ -70,45 +69,25 @@ closeBtn.onclick = async () => {
     }
 }
 
+var searchState;  //这个是游戏对局状态
 function cycleCall() {
     return new Promise(resolve => {
-    let intervalID2 = window.setInterval(async () => {
-        var res = await callLOLApi('get', '/lol-lobby/v2/lobby/matchmaking/search-state');
-        console.log(res.status);
-        if (res.status == 200) {
-            //请求成功
-            console.log('正在判断是否当前正在寻找对局')
-            if (res.data.searchState == 'Searching') { 
+        window.setInterval(async () => {
+            var res = await callLOLApi('get', '/lol-lobby/v2/lobby/matchmaking/search-state');
+            console.log(res.status);
+            if (res.status !== 200) {
+                console.log('正在判断是否当前正在寻找对局')
+            } else if (res.data.searchState == 'Searching') {
                 //当前正在寻找对局
                 searchState = 'Searching';
-                window.clearInterval(intervalID2); //关闭当前循环调用
-
-                let intervalID = window.setInterval(async () => {
-                    var res = await callLOLApi('get', '/lol-lobby/v2/lobby/matchmaking/search-state');
-                    console.log(res.status);
-                    if (res.status == 200) {
-                        //请求成功
-                        if (res.data.searchState == 'Found' && res.data.searchState != searchState) {
-                            //已经找到对局,并且上一次状态不是已找到对局,请点击接受
-                            await callLOLApi('post', '/lol-matchmaking/v1/ready-check/accept');
-                            searchState = 'Found';
-                            window.clearInterval(intervalID); //关闭当前循环调用
-                            await cycleCall();
-                        } else if (res.data.searchState == 'Searching') {
-                            //当前正在寻找对局
-                            searchState = 'Searching';
-                        }
-                    }
-                }, 1000);  //循环检测[是否找到对局], 1秒检测一次, 检测到了就点击接受并停止循环
+            } else if (res.data.searchState == 'Found' && res.data.searchState != searchState) {
+                //已经找到对局,并且上一次状态不是已找到对局,请点击接受
+                await callLOLApi('post', '/lol-matchmaking/v1/ready-check/accept');
+                searchState = 'Found';
             }
-        }
-    }, 1000);  //循环检测[是否正在寻找对局], 如果是就停止当前循环,并继续执行上面的[循环检测是否找到对局]
-    resolve();
-});
+        }, 1000)
+    })
 }
-
-
-
 
 
 //以下是参考方法, 以上是正式方法
