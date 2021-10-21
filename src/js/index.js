@@ -8,13 +8,6 @@ const { resolve } = require('path');
 
 
 
-
-
-//待删除
-//////////////////////////////////////
-var cmd = ''
-//////////////////////////////////////
-
 var port;  //端口
 var username;  //用户名,默认riot
 var password;  //密码
@@ -28,6 +21,7 @@ var auto_acceptance_run_status = false;  //这个作为自动接受功能是否�
 var lol_run_status = false;  //这个作为游戏是否运行的标志
 var is_parse_lockfile = false;  //这个是是否解析lockfile文件的标志
 var lolpath = '';  //游戏启动目录路径
+var intervalID; //存储自动接受循环的id
 
 
 //打开该程序就检测游戏是否开启, 开启了就获取游戏启动路径并解析文件,如果没有开启就提示并结束该程序
@@ -65,14 +59,15 @@ var closeBtn = document.getElementById("closeBtn");
 closeBtn.onclick = async () => {
     if (auto_acceptance_run_status) {
         pmessage.innerHTML = '<font style = "color:black">自动接受已关闭</font>';
-        window.clearInterval(intervalID)
+        window.clearInterval(intervalID);
+        auto_acceptance_run_status = false;
     }
 }
 
 var searchState;  //这个是游戏对局状态
 function cycleCall() {
     return new Promise(resolve => {
-        window.setInterval(async () => {
+        intervalID = window.setInterval(async () => {
             var res = await callLOLApi('get', '/lol-lobby/v2/lobby/matchmaking/search-state');
             console.log(res.status);
             if (res.status !== 200) {
@@ -88,10 +83,6 @@ function cycleCall() {
         }, 1000)
     })
 }
-
-
-//以下是参考方法, 以上是正式方法
-///////////////////////////////////////////////////////////////////
 
 //判断游戏是否运行
 function islolRunning() {
@@ -138,41 +129,6 @@ function getlolRunPath() {
     }
 }
 
-btn.onclick = () => {
-    console.log("haha")
-    try {
-        exec(cmd, { encoding: 'buffer' }, function (err, stdout, stderr) {
-            // 获取命令行执行的输出
-            var stdoutStr = iconv.decode(stdout, 'cp936');
-            console.log(stdoutStr);
-            var arr = stdoutStr.split("\r\r\n");
-            let newArr = arr.filter(i => i && i.trim()).filter(i => i.trim());
-            console.log(newArr);
-            p.innerHTML = newArr;
-            console.log(path.dirname(newArr[0]));
-            console.log(path.basename(newArr[0]));
-            console.log(path.extname(newArr[0]));
-        });
-    } catch (err) {
-        console.log(err)
-    }
-}
-
-//开启按钮
-function testHttps() {
-    if (run_status == 'close') {
-        pmessage.innerHTML = '<font style = "color:red">open</font>';
-        run_status = pmessage.textContent;
-        console.log(run_status);
-        parseLockFile();
-        testHttps();
-        callLOLApi('get', '/testroute');
-    }
-}
-
-
-
-
 //读取lockfile文件: LeagueClient:16408:51892:H60XiFdnlzAiR9xlJDuCwQ:https
 function parseLockFile(dirPath, flag) {  //这里第二个参数是:是否强制重新读取lockfile
     console.log('dirPath:' + dirPath);
@@ -194,7 +150,6 @@ function parseLockFile(dirPath, flag) {  //这里第二个参数是:是否强制
     console.log('username:' + username);
     console.log('password:' + password);
     console.log('protocol:' + protocol);
-    //callLOLApi('post', '/lol-matchmaking/v1/ready-check/accept');
 }
 
 //拼接并异步调用lolapi
@@ -202,8 +157,8 @@ function callLOLApi(method, route) {
     return new Promise(resolve => {
         try {
             var authStr = Buffer.from(username + ':' + password);
-            console.log(protocol + '://127.0.0.1:' + port + route);
-            console.log(method);
+            console.log('当前请求地址：' + protocol + '://127.0.0.1:' + port + route);
+            console.log('当前请求类型' + method);
 
             axios({
                 method: method,
@@ -218,12 +173,4 @@ function callLOLApi(method, route) {
             console.log(err);
         }
     })
-
-    // axios({
-    //     method: 'get',
-    //     url: 'https://127.0.0.1:63026/lol-champions/v1/owned-champions-minimal',
-    //     headers: { 'Authorization': 'Basic ' + authStr.toString('base64') },
-    // }).then(res => {
-    //     console.log(iconv.decode(authStr, 'base64'));
-    // })
 }

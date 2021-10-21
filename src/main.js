@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, Menu, BrowserWindow } = require('electron');
 const path = require('path');
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -7,22 +7,41 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
 }
 
 const createWindow = () => {
+  Menu.setApplicationMenu(null);
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 400,
+    height: 180,
     webPreferences: {
       nodeIntegration: true,  //渲染进程调用nodejs
       contextIsolation: false,  //渲染进程调用nodejs
       webSecurity: false,  //跨域问题
-    },
+    }
   });
+
+  //只能打开一个electron程序
+  const gotTheLock = app.requestSingleInstanceLock()
+  if (!gotTheLock) {
+    app.quit()
+  } else {
+    app.on('second-instance', (event) => {
+      if (mainWindow) {
+        if (mainWindow.isMinimized()) mainWindow.restore()
+        mainWindow.focus()
+      }
+    })
+    app.on('ready', () => {
+      createWindow()
+      const { Menu } = require('electron')
+      Menu.setApplicationMenu(null) // 隐藏菜单栏
+    })
+  }
 
   // and load the index.html of the app.
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();  //打包时记得注释
 };
 
  app.commandLine.appendSwitch('--ignore-certificate-errors', 'true')  //跨域问题
