@@ -15,8 +15,6 @@ var protocol;  //协议,一般是https
 //该cmd命令需要管理员权限才能保证获取到路径
 var getRunStatusCMD = 'wmic process get name | find "LeagueClientUx.exe"';  //用于检测游戏是否运行
 var getPathCMD = 'wmic process get executablepath | find "LeagueClientUx.exe"';  //用于获取游戏启动路径
-var btn = document.getElementById("btn");
-var p = document.getElementById("pdemo");
 var auto_acceptance_run_status = false;  //这个作为自动接受功能是否开启的标志, 默认为false
 var lol_run_status = false;  //这个作为游戏是否运行的标志
 var is_parse_lockfile = false;  //这个是是否解析lockfile文件的标志
@@ -98,7 +96,6 @@ function islolRunning() {
                 if (typeof (lolAppName) != 'undefined' && lolAppName.trim() != '') {  //这里需要利用短路功能
                     //游戏启动了,进行下一步获取游戏路径
                     console.log(lolAppName);
-                    p.innerHTML = newArr;
                     resolve(true);
                 } else {
                     console.log('游戏未启动, 请启动游戏!');
