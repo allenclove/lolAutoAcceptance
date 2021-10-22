@@ -1,0 +1,86 @@
+button {
+    border-radius: 4px;
+}
+
+
+/* 以下都是在element-ui官网 F12直接复制过来的样式 */
+
+.el-button {
+    --el-button-disabled-font-color: var(--el-text-color-placeholder);
+    --el-button-disabled-background-color: var(--el-color-white);
+    --el-button-disabled-border-color: var(--el-border-color-light);
+    --el-button-divide-border-color: rgba(255, 255, 255, .5);
+    display: inline-block;
+    line-height: 1;
+    min-height: 40px;
+    white-space: nowrap;
+    cursor: pointer;
+    background: var(--el-button-background-color, var(--el-color-white));
+    border: var(--el-border-base);
+    border-color: var(--el-button-border-color, var(--el-border-color-base));
+    color: var(--el-button-font-color, var(--el-text-color-regular));
+    -webkit-appearance: none;
+    text-align: center;
+    box-sizing: border-box;
+    outline: none;
+    margin: 0;
+    transition: .1s;
+    font-weight: var(--el-button-font-weight);
+    padding: 12px 20px;
+    font-size: var(--el-font-size-base, 14px);
+    border-radius: var(--el-border-radius-base);
+}
+
+.el-button:hover,
+.el-button:focus {
+    color: var(--el-color-primary);
+    border-color: var(--el-color-primary-light-7);
+    background-color: var(--el-color-primary-light-9);
+    outline: none;
+}
+
+
+/* el-button--info start */
+
+.el-button--info {
+    --el-button-font-color: #ffffff;
+    --el-button-background-color: #909399;
+    --el-button-border-color: #909399;
+    --el-button-hover-color: #a6a9ad;
+    --el-button-active-font-color: #e6e6e6;
+    --el-button-active-background-color: #767980;
+    --el-button-active-border-color: #767980;
+}
+
+.el-button--info:hover,
+.el-button--info:focus {
+    background: var(--el-button-hover-color);
+    border-color: var(--el-button-hover-color);
+    color: var(--el-button-font-color);
+}
+
+
+/* el-button--info end */
+
+
+/* el-button--primary 的样式start*/
+
+.el-button--primary {
+    --el-button-font-color: #ffffff;
+    --el-button-background-color: #409eff;
+    --el-button-border-color: #409eff;
+    --el-button-hover-color: #66b1ff;
+    --el-button-active-font-color: #e6e6e6;
+    --el-button-active-background-color: #0d84ff;
+    --el-button-active-border-color: #0d84ff;
+}
+
+.el-button--primary:hover,
+.el-button--primary:focus {
+    background: var(--el-button-hover-color);
+    border-color: var(--el-button-hover-color);
+    color: var(--el-button-font-color);
+}
+
+
+/* el-button--primary 的样式end*/
