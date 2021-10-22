@@ -12,7 +12,7 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 400,
     height: 180,
-    resizable: false,  //限制用户调整窗口大小
+    //resizable: false,  //限制用户调整窗口大小
     webPreferences: {
       nodeIntegration: true,  //渲染进程调用nodejs
       contextIsolation: false,  //渲染进程调用nodejs

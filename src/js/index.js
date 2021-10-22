@@ -45,18 +45,16 @@ async function progremInit() {
 var openBtn = document.getElementById("openBtn");
 openBtn.onclick = async () => {
     if (!auto_acceptance_run_status) {
+        //开启自动接受
         pmessage.innerHTML = '<font style = "color:red">自动接受已开启</font>';
+        openBtn.innerHTML = 'close';
         auto_acceptance_run_status = true;
 
         await cycleCall();
-    }
-}
-
-//关闭按钮
-var closeBtn = document.getElementById("closeBtn");
-closeBtn.onclick = async () => {
-    if (auto_acceptance_run_status) {
+    }else{
+        //关闭自动接受
         pmessage.innerHTML = '<font style = "color:black">自动接受已关闭</font>';
+        openBtn.innerHTML = 'open';
         window.clearInterval(intervalID);
         auto_acceptance_run_status = false;
     }
