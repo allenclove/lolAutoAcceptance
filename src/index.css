@@ -1,14 +1,19 @@
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  margin: auto;
-  max-width: 38rem;
-  padding: 2rem;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: auto;
+    max-width: 38rem;
+    padding: 2rem;
+    background: black;
 }
 
 div#divdemo {
-  background-color: orange;
-  color: black;
-  width: 100%;
-  height: 100px;
-  white-space: pre-line;
+    background-color: orange;
+    color: black;
+    width: 100%;
+    height: 100px;
+    white-space: pre-line;
+}
+
+font {
+    color: white;
 }

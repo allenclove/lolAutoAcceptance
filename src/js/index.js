@@ -44,24 +44,26 @@ async function progremInit() {
 //开启按钮
 var openBtn = document.getElementById("openBtn");
 openBtn.onclick = async() => {
-    if (!auto_acceptance_run_status) {
-        //开启自动接受
-        pmessage.innerHTML = '<font style = "color:red">自动接受已开启</font>';
-        openBtn.innerHTML = 'close';
-        // 修改按钮dom的class名
-        openBtn.className = 'el-button el-button--primary';
-        auto_acceptance_run_status = true;
+    //开启自动接受
+    pmessage.innerHTML = '<font style = "color:blue">自动接受已开启</font>';
+    // 修改按钮dom的class名
+    openBtn.className = 'button leftButton active';
+    closeBtn.className = 'button rightButton ';
+    auto_acceptance_run_status = true;
 
-        await cycleCall();
-    } else {
-        //关闭自动接受
-        pmessage.innerHTML = '<font style = "color:black">自动接受已关闭</font>';
-        openBtn.innerHTML = 'open';
-        // 修改按钮dom的class名
-        openBtn.className = 'el-button el-button--info';
-        window.clearInterval(intervalID);
-        auto_acceptance_run_status = false;
-    }
+    await cycleCall();
+}
+
+//关闭按钮
+var closeBtn = document.getElementById("closeBtn");
+closeBtn.onclick = async() => {
+    //关闭自动接受
+    pmessage.innerHTML = '<font style = "color:red">自动接受已开启</font>';
+    // 修改按钮dom的class名
+    closeBtn.className = 'button rightButton active';
+    openBtn.className = 'button leftButton';
+    window.clearInterval(intervalID);
+    auto_acceptance_run_status = false;
 }
 
 var searchState; //这个是游戏对局状态
