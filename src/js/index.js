@@ -58,7 +58,7 @@ openBtn.onclick = async() => {
 var closeBtn = document.getElementById("closeBtn");
 closeBtn.onclick = async() => {
     //关闭自动接受
-    pmessage.innerHTML = '<font style = "color:red">自动接受已开启</font>';
+    pmessage.innerHTML = '<font style = "color:red">自动接受已关闭</font>';
     // 修改按钮dom的class名
     closeBtn.className = 'button rightButton active';
     openBtn.className = 'button leftButton';
