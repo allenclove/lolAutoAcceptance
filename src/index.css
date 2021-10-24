@@ -3,7 +3,10 @@ body {
     margin: auto;
     max-width: 38rem;
     padding: 2rem;
-    background: black;
+    background: #ffffff;
+    overflow: scroll;
+    overflow-y: hidden;
+    overflow-x: hidden;
 }
 
 div#divdemo {

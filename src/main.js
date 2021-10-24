@@ -10,9 +10,9 @@ const createWindow = () => {
     Menu.setApplicationMenu(null);
     // Create the browser window.
     const mainWindow = new BrowserWindow({
-        width: 630,
+        width: 650,
         height: 180,
-        //resizable: false,  //限制用户调整窗口大小
+        resizable: false,  //限制用户调整窗口大小
         webPreferences: {
             nodeIntegration: true, //渲染进程调用nodejs
             contextIsolation: false, //渲染进程调用nodejs
@@ -42,7 +42,7 @@ const createWindow = () => {
     mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
     // Open the DevTools.
-    mainWindow.webContents.openDevTools(); //打包时记得注释
+    //mainWindow.webContents.openDevTools(); //打包时记得注释
 };
 
 app.commandLine.appendSwitch('--ignore-certificate-errors', 'true') //跨域问题
