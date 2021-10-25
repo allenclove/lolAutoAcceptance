@@ -1,4 +1,5 @@
 body {
+    text-align: center;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     margin: auto;
     max-width: 38rem;
@@ -18,5 +19,6 @@ div#divdemo {
 }
 
 font {
-    color: white;
+    font-size: xx-large;
+    color: red;
 }

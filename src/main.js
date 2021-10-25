@@ -7,16 +7,17 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
 }
 
 const createWindow = () => {
-    Menu.setApplicationMenu(null);
+    Menu.setApplicationMenu(null); //隐藏菜单栏
     // Create the browser window.
     const mainWindow = new BrowserWindow({
-        width: 650,
-        height: 180,
-        resizable: false,  //限制用户调整窗口大小
+        width: 380,
+        height: 110,
+        resizable: false,  //限制用户调整窗口大小, 这个参数设置为false后，窗口会变大一点（所以长度和宽度都减了10）
         webPreferences: {
             nodeIntegration: true, //渲染进程调用nodejs
             contextIsolation: false, //渲染进程调用nodejs
             webSecurity: false, //跨域问题
+            zoomFactor: 0.5,  //缩放参数，3.0代表放大300%，默认是1.0
         }
     });
 
@@ -33,8 +34,6 @@ const createWindow = () => {
         })
         app.on('ready', () => {
             createWindow()
-            const { Menu } = require('electron')
-            Menu.setApplicationMenu(null) // 隐藏菜单栏
         })
     }
 
