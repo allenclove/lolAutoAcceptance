@@ -23,27 +23,29 @@ var intervalID; //存储自动接受循环的id
 
 
 //打开该程序就检测游戏是否开启, 开启了就获取游戏启动路径并解析文件,如果没有开启就提示并结束该程序
-progremInit();
+await progremInit();
 async function progremInit() {
-    if (lolpath != '') {
-        //获取到了游戏启动目录路径,解析lockfile文件
-        parseLockFile(lolpath + '\\lockfile');
-        console.log('path:' + lolpath + '\\lockfile');
-    } else {
-        //未获取到了游戏启动目录路径
-        if (await islolRunning()) {
-            console.log('游戏已经启动');
-            //获取游戏启动路径
-            getlolRunPath();
+    return new Promise(resolve => {
+        if (lolpath != '') {
+            //获取到了游戏启动目录路径,解析lockfile文件
+            parseLockFile(lolpath + '\\lockfile');
+            console.log('path:' + lolpath + '\\lockfile');
         } else {
-            console.log('游戏未启动,请先启动游戏,再启动本工具!');
+            //未获取到了游戏启动目录路径
+            if (await islolRunning()) {
+                console.log('游戏已经启动');
+                //获取游戏启动路径
+                getlolRunPath();
+            } else {
+                console.log('游戏未启动,请先启动游戏,再启动本工具!');
+            }
         }
-    }
+    })
 }
 
 //开启按钮
 var openBtn = document.getElementById("openBtn");
-openBtn.onclick = async() => {
+openBtn.onclick = async () => {
     //开启自动接受
     pmessage.innerHTML = '<font style = "color:blue">自动接受已开启</font>';
     // 修改按钮dom的class名
@@ -51,12 +53,18 @@ openBtn.onclick = async() => {
     closeBtn.className = 'button rightButton ';
     auto_acceptance_run_status = true;
 
+    //点击按钮就调用一次自动接受api
+    await callLOLApi('post', '/lol-matchmaking/v1/ready-check/accept');
+
+    //点击开启按钮就自动解析一次lockfile文件
+    await progremInit();
+
     await cycleCall();
 }
 
 //关闭按钮
 var closeBtn = document.getElementById("closeBtn");
-closeBtn.onclick = async() => {
+closeBtn.onclick = async () => {
     //关闭自动接受
     pmessage.innerHTML = '<font style = "color:red">自动接受已关闭</font>';
     // 修改按钮dom的class名
@@ -69,7 +77,7 @@ closeBtn.onclick = async() => {
 var searchState; //这个是游戏对局状态
 function cycleCall() {
     return new Promise(resolve => {
-        intervalID = window.setInterval(async() => {
+        intervalID = window.setInterval(async () => {
             var res = await callLOLApi('get', '/lol-lobby/v2/lobby/matchmaking/search-state');
             console.log(res.status);
             if (res.status !== 200) {
@@ -82,7 +90,7 @@ function cycleCall() {
                 await callLOLApi('post', '/lol-matchmaking/v1/ready-check/accept');
                 searchState = 'Found';
             }
-        }, 1000)
+        }, 500)
     })
 }
 
@@ -90,14 +98,14 @@ function cycleCall() {
 function islolRunning() {
     return new Promise(resolve => {
         try {
-            exec(getRunStatusCMD, { encoding: 'buffer' }, function(err, stdout, stderr) {
+            exec(getRunStatusCMD, { encoding: 'buffer' }, function (err, stdout, stderr) {
                 // 获取命令行执行的输出并解析
                 var stdoutStr = iconv.decode(stdout, 'cp936');
                 var arr = stdoutStr.split("\r\r\n");
                 let newArr = arr.filter(i => i && i.trim()).filter(i => i.trim()); //过滤为空的字符串
                 var lolAppName = newArr[0]; //获取到了进程名则说明游戏正在运行
 
-                if (typeof(lolAppName) != 'undefined' && lolAppName.trim() != '') { //这里需要利用短路功能
+                if (typeof (lolAppName) != 'undefined' && lolAppName.trim() != '') { //这里需要利用短路功能
                     //游戏启动了,进行下一步获取游戏路径
                     console.log(lolAppName);
                     resolve(true);
@@ -115,7 +123,7 @@ function islolRunning() {
 //获取游戏启动路径
 function getlolRunPath() {
     try {
-        exec(getPathCMD, { encoding: 'buffer' }, function(err, stdout, stderr) {
+        exec(getPathCMD, { encoding: 'buffer' }, function (err, stdout, stderr) {
             // 获取命令行执行的输出并解析
             var stdoutStr = iconv.decode(stdout, 'cp936');
             var arr = stdoutStr.split("\r\r\n");
