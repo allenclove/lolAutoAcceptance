@@ -23,9 +23,8 @@ var intervalID; //存储自动接受循环的id
 
 
 //打开该程序就检测游戏是否开启, 开启了就获取游戏启动路径并解析文件,如果没有开启就提示并结束该程序
-await progremInit();
+progremInit();
 async function progremInit() {
-    return new Promise(resolve => {
         if (lolpath != '') {
             //获取到了游戏启动目录路径,解析lockfile文件
             parseLockFile(lolpath + '\\lockfile');
@@ -40,7 +39,6 @@ async function progremInit() {
                 console.log('游戏未启动,请先启动游戏,再启动本工具!');
             }
         }
-    })
 }
 
 //开启按钮
@@ -53,10 +51,6 @@ openBtn.onclick = async () => {
     closeBtn.className = 'button rightButton ';
     auto_acceptance_run_status = true;
 
-    //点击按钮就调用一次自动接受api
-    await callLOLApi('post', '/lol-matchmaking/v1/ready-check/accept');
-
-    //点击开启按钮就自动解析一次lockfile文件
     await progremInit();
 
     await cycleCall();
@@ -74,21 +68,23 @@ closeBtn.onclick = async () => {
     auto_acceptance_run_status = false;
 }
 
-var searchState; //这个是游戏对局状态
 function cycleCall() {
     return new Promise(resolve => {
         intervalID = window.setInterval(async () => {
+            //这个api是查询当前状态，当找到对局和进入选人界面状态都是Found，所以需要下面那个api辅助判断是否正好在找到对局状态
             var res = await callLOLApi('get', '/lol-lobby/v2/lobby/matchmaking/search-state');
-            console.log(res.status);
+            console.log('res:' + res);
+
+            //选择界面的时候请求状态是200，其他情况是404
+            var res2 = await callLOLApi('get', '/lol-champ-select/v1/session');
+            console.log('res2:' + res2);
+
             if (res.status !== 200) {
-                console.log('正在判断是否当前正在寻找对局')
-            } else if (res.data.searchState == 'Searching') {
-                //当前正在寻找对局
-                searchState = 'Searching';
-            } else if (res.data.searchState == 'Found' && res.data.searchState != searchState) {
-                //已经找到对局,并且上一次状态不是已找到对局,请点击接受
+                console.log('正在判断是否当前正在寻找对局');
+            } else if (res.data.searchState == 'Found' && res2.status == 404) {
+                //已经找到对局,并且获取当前队伍信息请求404，表示正好是找到对局状态，等待接受游戏
                 await callLOLApi('post', '/lol-matchmaking/v1/ready-check/accept');
-                searchState = 'Found';
+                console.log('已经找到对局，点击接受');
             }
         }, 500)
     })
@@ -176,6 +172,9 @@ function callLOLApi(method, route) {
             }).then(res => {
                 console.log(res);
                 resolve(res);
+            }).catch(err => {
+                const result = err.response;
+                resolve(result);
             })
         } catch (err) {
             console.log('调用lolapi发生异常!');
