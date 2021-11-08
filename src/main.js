@@ -18,8 +18,13 @@ const createWindow = () => {
             contextIsolation: false, //渲染进程调用nodejs
             webSecurity: false, //跨域问题
             zoomFactor: 0.5,  //缩放参数，3.0代表放大300%，默认是1.0
-        }
+        },
+        show: false  //mainWindow创建后隐藏
     });
+
+     mainWindow.on('ready-to-show', function () {
+         mainWindow.show()
+     })
 
     //只能打开一个electron程序
     const gotTheLock = app.requestSingleInstanceLock()
