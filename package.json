@@ -1,12 +1,12 @@
 {
   "name": "my-app",
   "productName": "my-app",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "My Electron application description",
   "main": "src/main.js",
   "scripts": {
     "start": "electron-forge start",
-    "package": "electron-packager . lolAutoAcceptance --platform=win32 --arch=x64 --icon=computer.ico --out=./out --asar --app-version=0.0.1 --overwrite",
+    "package": "electron-packager . lolAutoAcceptance --platform=win32 --arch=x64 --icon=computer.ico --out=./out --asar --app-version=2.0.0 --overwrite",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\""
