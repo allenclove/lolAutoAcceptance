@@ -9,9 +9,8 @@ GET https://127.0.0.1:60386/lol-champions/v1/owned-champions-minimal
 Authorization: Basic cmlvdDoxbDRxaG1fblUwWUkyTGtDckZBRjR3
 
 ### 获取当前对局状态
-GET https://127.0.0.1:50207/lol-lobby/v2/lobby/matchmaking/search-state
-Authorization: Basic cmlvdDpob0p4SzMwZm1fX1QtakM3dmtmNU9B
-
+GET https://127.0.0.1:55623/lol-lobby/v2/lobby/matchmaking/search-state
+Authorization: Basic cmlvdDo1RktYN0JYWlBjR1FBTFV4ak5UZlBR
 ### 获取当前队伍信息，除了选择界面，其他都是404
 GET https://127.0.0.1:50207/lol-champ-select/v1/session
-Authorization: Basic cmlvdDpob0p4SzMwZm1fX1QtakM3dmtmNU9B
+Authorization: Basic cmlvdDo1RktYN0JYWlBjR1FBTFV4ak5UZlBR

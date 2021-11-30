@@ -15,6 +15,7 @@ var protocol; //协议,一般是https
 //该cmd命令需要管理员权限才能保证获取到路径
 var getRunStatusCMD = 'wmic process get name | find "LeagueClientUx.exe"'; //用于检测游戏是否运行
 var getPathCMD = 'wmic process get executablepath | find "LeagueClientUx.exe"'; //用于获取游戏启动路径
+var getGameLaunchInfo = 'WMIC PROCESS WHERE name="LeagueClientUx.exe" GET commandline';
 var auto_acceptance_run_status = false; //这个作为自动接受功能是否开启的标志, 默认为false
 var lol_run_status = false; //这个作为游戏是否运行的标志
 var is_parse_lockfile = false; //这个是是否解析lockfile文件的标志
@@ -22,23 +23,9 @@ var lolpath = ''; //游戏启动目录路径
 var intervalID; //存储自动接受循环的id
 
 
-//打开该程序就检测游戏是否开启, 开启了就获取游戏启动路径并解析文件,如果没有开启就提示并结束该程序
-progremInit();
+//用于获取端口号和密码用于调用api
 async function progremInit() {
-        if (lolpath != '') {
-            //获取到了游戏启动目录路径,解析lockfile文件
-            parseLockFile(lolpath + '\\lockfile');
-            console.log('path:' + lolpath + '\\lockfile');
-        } else {
-            //未获取到了游戏启动目录路径
-            if (await islolRunning()) {
-                console.log('游戏已经启动');
-                //获取游戏启动路径
-                getlolRunPath();
-            } else {
-                console.log('游戏未启动,请先启动游戏,再启动本工具!');
-            }
-        }
+    getPortAndPassword();
 }
 
 //开启按钮
@@ -116,6 +103,10 @@ function islolRunning() {
     })
 }
 
+//弃用的方法-----2021.11.30 by allenc
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+//由于获取游戏启动路径就是为了去解析Lockfile文件，现在不需要解析该文件了，该方法也就不需要了（顺便提一下其实也有api可以获得游戏安装路径的）
+//GET https://127.0.0.1:61823/data-store/v1/install-dir
 //获取游戏启动路径
 function getlolRunPath() {
     try {
@@ -134,6 +125,7 @@ function getlolRunPath() {
     }
 }
 
+//大概2021年11月左右，这一次更新导致Lockfile文件不会再实时更新响应的端口号和密码，所以这个解析文件的方法被弃用
 //读取lockfile文件: LeagueClient:16408:51892:H60XiFdnlzAiR9xlJDuCwQ:https
 function parseLockFile(dirPath, flag) { //这里第二个参数是:是否强制重新读取lockfile
     console.log('dirPath:' + dirPath);
@@ -155,6 +147,53 @@ function parseLockFile(dirPath, flag) { //这里第二个参数是:是否强制�
     console.log('username:' + username);
     console.log('password:' + password);
     console.log('protocol:' + protocol);
+
+    var authStr = Buffer.from(username + ':' + password);
+    console.log('authStr:' + 'Basic ' + authStr.toString('base64'));
+}
+
+// async function progremInit() {
+//         if (lolpath != '') {
+//             //获取到了游戏启动目录路径,解析lockfile文件
+//             parseLockFile(lolpath + '\\lockfile');
+//             console.log('path:' + lolpath + '\\lockfile');
+//         } else {
+//             //未获取到了游戏启动目录路径
+//             if (await islolRunning()) {
+//                 console.log('游戏已经启动');
+//                 //获取游戏启动路径
+//                 getlolRunPath();
+//             } else {
+//                 console.log('游戏未启动,请先启动游戏,再启动本工具!');
+//             }
+//         }
+// }
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//用于替代解析Lockfile文件的方法来获取端口号和密码， 原理：通过获取游戏启动参数来获取信息
+function getPortAndPassword() { //这里第二个参数是:是否强制重新读取lockfile
+    try {
+        exec(getGameLaunchInfo, { encoding: 'buffer' }, function (err, stdout, stderr) {
+            var stdoutStr = iconv.decode(stdout, 'cp936');
+            // 通过正则表达式解析游戏启动参数
+            let protReg = new RegExp('--app-port=([0-9]*)');
+            let authTokenReg = new RegExp('--remoting-auth-token=([\\w-]*)');
+            
+            port = stdoutStr.match(protReg)[1];
+            username = 'riot';
+            password = stdoutStr.match(authTokenReg)[1];
+            protocol = 'https';
+
+            console.log('port: ' + port);
+            console.log('auth-token: ' + password);
+
+            var authStr = Buffer.from(username + ':' + password);
+            console.log('authStr:' + 'Basic ' + authStr.toString('base64'));
+        })
+    } catch (err) {
+        console.log('游戏未启动，无法获取游戏启动参数！');
+        console.log(err);
+    }
 }
 
 //拼接并异步调用lolapi
